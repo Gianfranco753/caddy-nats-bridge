@@ -14,6 +14,8 @@ import (
 type Publish struct {
 	Subject     string `json:"subject,omitempty"`
 	ServerAlias string `json:"serverAlias,omitempty"`
+	AwaitResponse bool `json:"awaitResponse,omitempty"`
+	AwaitResponseTimeout time.Duration `json:"awaitResponseTimeout,omitempty"`
 
 	logger *zap.Logger
 	app    *natsbridge.NatsBridgeApp
@@ -26,6 +28,8 @@ func (Publish) CaddyModule() caddy.ModuleInfo {
 			// Default values
 			return &Publish{
 				ServerAlias: "default",
+				AwaitResponse: false,
+				AwaitResponseTimeout: 300ms,
 			}
 		},
 	}
@@ -63,9 +67,36 @@ func (p Publish) ServeHTTP(w http.ResponseWriter, r *http.Request, next caddyhtt
 		return err
 	}
 
+	if p.AwaitResponse {
+		// Channel for collecting responses
+		responses := make(chan string, 10) // Adjust buffer size as needed
+		replySubject := fmt.Sprintf("reply.%s", nats.NewInbox())
+		sub, err := nc.Subscribe(replySubject, func(msg *nats.Msg) {
+			responses <- msg.Data
+		})
+		defer sub.Close()
+		if err != nil {
+			return fmt.Errorf("could not subscribe to NATS reply subject: %w", err)
+		}
+		err := server.conn(p.Subject, replySubject, userData)
+		if err != nil {
+			return fmt.Errorf("could send msg to NATS subject: %w", err)
+		}
+	}
+
 	err = server.Conn.PublishMsg(msg)
 	if err != nil {
 		return fmt.Errorf("could not publish NATS message: %w", err)
+	}
+
+	if p.AwaitResponse {
+		time.Sleep(p.AwaitResponseTimeout * time.Second)
+		close(responses)
+		var resp []bytes
+		for response := range responses {
+			resp = append(resp, response)
+		}
+		w.Write(resp)
 	}
 
 	// TODO: wiretap mode :) -> Response to NATS.
