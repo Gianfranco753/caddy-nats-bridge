@@ -4,7 +4,7 @@ import (
 	jsonMod "encoding/json"
 	"fmt"
 	"github.com/caddyserver/caddy/v2/caddytest"
-	_ "github.com/sandstorm/caddy-nats-bridge"
+	_ "github.com/gianfranco753/caddy-nats-bridge"
 	"os"
 	"path/filepath"
 	"regexp"

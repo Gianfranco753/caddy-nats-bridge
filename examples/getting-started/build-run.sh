@@ -8,8 +8,8 @@ fi
 
 # build caddy server if needed
 if [ ! -f caddy ]; then
-  go get -u github.com/sandstorm/caddy-nats-bridge
-  $XCADDY build --with github.com/sandstorm/caddy-nats-bridge
+  go get -u github.com/gianfranco753/caddy-nats-bridge
+  $XCADDY build --with github.com/gianfranco753/caddy-nats-bridge
 fi
 
 nats-server &

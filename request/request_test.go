@@ -3,8 +3,8 @@ package request_test
 import (
 	"fmt"
 	"github.com/nats-io/nats.go"
-	_ "github.com/sandstorm/caddy-nats-bridge"
-	"github.com/sandstorm/caddy-nats-bridge/integrationtest"
+	_ "github.com/gianfranco753/caddy-nats-bridge"
+	"github.com/gianfranco753/caddy-nats-bridge/integrationtest"
 	"io"
 	"net/http"
 	"testing"

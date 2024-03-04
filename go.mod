@@ -1,4 +1,4 @@
-module github.com/sandstorm/caddy-nats-bridge
+module github.com/gianfranco753/caddy-nats-bridge
 
 go 1.18
 

@@ -5,7 +5,7 @@ import (
 	"github.com/caddyserver/caddy/v2/caddyconfig"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/caddyserver/caddy/v2/caddyconfig/httpcaddyfile"
-	"github.com/sandstorm/caddy-nats-bridge/subscribe"
+	"github.com/gianfranco753/caddy-nats-bridge/subscribe"
 )
 
 func ParseGobalNatsOption(d *caddyfile.Dispenser, existingVal interface{}) (interface{}, error) {
